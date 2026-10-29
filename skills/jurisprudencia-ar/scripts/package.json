@@ -1,0 +1,12 @@
+{
+  "name": "jurisprudencia-ar-conectores",
+  "private": true,
+  "description": "Conectores de la skill jurisprudencia-ar con salida JSON normalizada",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "playwright": "^1.48.0"
+  }
+}

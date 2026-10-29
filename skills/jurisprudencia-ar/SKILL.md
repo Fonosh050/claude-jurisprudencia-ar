@@ -43,7 +43,14 @@ empleo público o privado), preguntá antes de buscar.
 ### 2. Elegir fuentes
 
 Consultá `references/fuentes.md` para saber qué fuente cubre cada jurisdicción y fuero,
-cómo buscar en cada una y sus limitaciones. Orden general:
+cómo buscar en cada una y sus limitaciones. Si existe un conector en `scripts/` para la
+fuente, usalo antes que WebFetch (ver `scripts/README.md`; las rutas son relativas a la carpeta de esta skill):
+
+- **JUBA (SCBA)**: `node scripts/juba.js buscar --texto "<términos>" --materia "<materia>"`
+  y, para cada fallo con `id_fallo`, `node scripts/juba.js fallo --id <id_fallo>` para
+  confirmar carátula, causa, fecha y leer la parte dispositiva en el texto completo.
+
+Orden general:
 
 1. Fuente oficial del tribunal que dictó el fallo (CSJN, JUBA/SCBA, TSJ Córdoba, PJN).
 2. SAIJ (oficial, agregador nacional y provincial).

@@ -24,6 +24,16 @@ mkdir -p ~/.claude/skills && ln -s ~/jurisprudencia-ar/skills/jurisprudencia-ar 
 
 Para un solo proyecto, copiá `skills/jurisprudencia-ar` en `.claude/skills/` del proyecto.
 
+### Conectores (opcional)
+
+Los conectores de `scripts/` necesitan Node 18+ y Chromium para Playwright:
+
+```bash
+cd ~/jurisprudencia-ar/skills/jurisprudencia-ar/scripts && npm install && npx playwright install chromium
+```
+
+Ver `skills/jurisprudencia-ar/scripts/README.md`.
+
 ### Permisos recomendados
 
 Para que Claude Code consulte las fuentes sin pedir permiso en cada llamada, agregá en
@@ -57,9 +67,11 @@ Pedile a Claude, por ejemplo:
 
 - [x] Reglas anti-invención, formato de salida y escala de confiabilidad.
 - [x] Mapa de fuentes por jurisdicción y fuero.
-- [ ] Verificar en vivo los buscadores de cada fuente (marcados como *[a verificar]* en
-      `references/fuentes.md`).
-- [ ] Conectores en `scripts/` con salida JSON normalizada (SAIJ, CSJN, JUBA, Córdoba).
+- [x] Verificar en vivo el acceso a cada fuente (resumen en `references/fuentes.md`).
+- [x] Conector JUBA (SCBA): `skills/jurisprudencia-ar/scripts/juba.js`.
+- [ ] Conectores SAIJ y CSJN (responden a WebFetch, pero devuelven 403 a servidores; la API
+      de SAIJ devuelve 0 resultados).
+- [ ] Córdoba: Jurisemia exige captcha, así que no tiene conector automático.
 - [ ] Correr los casos de `evals/evals.json` y ajustar.
 
 ## Aviso
