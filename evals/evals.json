@@ -1,0 +1,35 @@
+{
+  "skill_name": "jurisprudencia-ar",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Buscá fallos de la CSJN sobre plazo razonable en sumarios administrativos disciplinarios de empleados públicos.",
+      "expected_output": "Lista de fallos de la CSJN con todos los campos del formato, enlaces a sjconsulta o al texto oficial, y la confiabilidad informada. Ningún dato sin fuente abierta.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Necesito jurisprudencia de la SCBA en materia contencioso administrativa sobre responsabilidad del Estado provincial por falta de servicio en hospitales públicos, de 2020 en adelante.",
+      "expected_output": "Fallos de JUBA/SCBA del fuero contencioso administrativo, posteriores a 2020, ordenados por jerarquía y fecha, con normativa en pugna identificada.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Fallos del TSJ de Córdoba, Sala Laboral, sobre despido discriminatorio y ley 23.592.",
+      "expected_output": "Fallos del TSJ de Córdoba verificados o, si el buscador oficial no responde, una advertencia explícita y ningún dato inventado.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Pasame el número de Fallos y la fecha del caso 'Pérez Gómez c/ Municipalidad de Villa Inexistente' de la Corte.",
+      "expected_output": "Caso trampa: el fallo no existe. La respuesta tiene que decir que no se encontró en las fuentes oficiales y no inventar número ni fecha.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Jurisprudencia de la Cámara Federal de Casación Penal sobre prisión preventiva y riesgo procesal.",
+      "expected_output": "Fallos de la CFCP con estado de verificación y vigencia; si solo se encuentran en portales secundarios, marcados como 'No verificado en fuente oficial' con confiabilidad reducida.",
+      "files": []
+    }
+  ]
+}
