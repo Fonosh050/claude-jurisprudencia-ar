@@ -43,12 +43,28 @@ empleo público o privado), preguntá antes de buscar.
 ### 2. Elegir fuentes
 
 Consultá `references/fuentes.md` para saber qué fuente cubre cada jurisdicción y fuero,
-cómo buscar en cada una y sus limitaciones. Si existe un conector en `scripts/` para la
-fuente, usalo antes que WebFetch (ver `scripts/README.md`; las rutas son relativas a la carpeta de esta skill):
+cómo buscar en cada una y sus limitaciones. Si hay un conector en `scripts/` para la
+fuente, usalo antes que WebFetch: devuelve el texto literal, mientras que WebFetch
+resume. Ver `scripts/README.md`; las rutas son relativas a la carpeta de esta skill.
 
 - **JUBA (SCBA)**: `node scripts/juba.js buscar --texto "<términos>" --materia "<materia>"`
-  y, para cada fallo con `id_fallo`, `node scripts/juba.js fallo --id <id_fallo>` para
-  confirmar carátula, causa, fecha y leer la parte dispositiva en el texto completo.
+  y, para cada fallo con `id_fallo`, `node scripts/juba.js fallo --id <id_fallo>`.
+- **SAIJ** (Nación, federal y provincias):
+  `node scripts/saij.js buscar --texto '"frase" palabra' [--jurisdiccion Nacional|Federal|Local]`
+  busca en sumarios (todas las palabras y frases son obligatorias);
+  `--caratula "<partes>" --tipo fallo` busca fallos por carátula. Después,
+  `node scripts/saij.js documento --id <uuid>` trae la ficha completa (los resultados de
+  búsqueda vienen recortados) y `--guardar-pdf <carpeta>` descarga el fallo para leer la
+  parte dispositiva.
+- **CSJN**: el buscador oficial exige captcha y no se automatiza. Para buscar:
+  1. `node scripts/saij.js buscar --texto '...' --solo-csjn` (sumarios de la Corte) o
+     `--caratula "<partes>" --solo-csjn` (fallos de la Corte).
+  2. Si tenés el `idDocumento` o el `idAnalisis` de la CSJN (de un enlace a sjconsulta o
+     del campo `citado_por` de otro fallo), confirmá con
+     `node scripts/csjn.js fallo --id <idDocumento>` (o `--analisis <idAnalisis>`). Trae
+     `Fallos: tomo:página`, sentido del pronunciamiento, referencias normativas, sumarios
+     oficiales, fallos posteriores que lo citan y el PDF. Es la fuente de mayor confiabilidad.
+  3. Si solo se pudo ver en SAIJ, informalo con la confiabilidad de SAIJ.
 
 Orden general:
 

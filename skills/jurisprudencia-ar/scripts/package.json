@@ -3,6 +3,9 @@
   "private": true,
   "description": "Conectores de la skill jurisprudencia-ar con salida JSON normalizada",
   "type": "commonjs",
+  "scripts": {
+    "test": "node --test"
+  },
   "engines": {
     "node": ">=18"
   },

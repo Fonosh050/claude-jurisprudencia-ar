@@ -26,7 +26,8 @@ Para un solo proyecto, copiá `skills/jurisprudencia-ar` en `.claude/skills/` de
 
 ### Conectores (opcional)
 
-Los conectores de `scripts/` necesitan Node 18+ y Chromium para Playwright:
+Los conectores de `scripts/` necesitan Node 18+. SAIJ y CSJN no tienen dependencias;
+JUBA necesita Playwright y Chromium:
 
 ```bash
 cd ~/jurisprudencia-ar/skills/jurisprudencia-ar/scripts && npm install && npx playwright install chromium
@@ -69,8 +70,9 @@ Pedile a Claude, por ejemplo:
 - [x] Mapa de fuentes por jurisdicción y fuero.
 - [x] Verificar en vivo el acceso a cada fuente (resumen en `references/fuentes.md`).
 - [x] Conector JUBA (SCBA): `skills/jurisprudencia-ar/scripts/juba.js`.
-- [ ] Conectores SAIJ y CSJN (responden a WebFetch, pero devuelven 403 a servidores; la API
-      de SAIJ devuelve 0 resultados).
+- [x] Conector SAIJ: `skills/jurisprudencia-ar/scripts/saij.js` (búsqueda y ficha).
+- [x] Conector CSJN: `skills/jurisprudencia-ar/scripts/csjn.js` (solo ficha del fallo: el
+      buscador de la Corte exige captcha; para buscar fallos de la Corte se usa SAIJ).
 - [ ] Córdoba: Jurisemia exige captcha, así que no tiene conector automático.
 - [ ] Correr los casos de `evals/evals.json` y ajustar.
 

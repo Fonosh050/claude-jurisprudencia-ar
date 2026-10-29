@@ -5,17 +5,19 @@
 
 ## Resumen de acceso (29/10/2026)
 
-| Fuente | WebFetch | Desde servidor (curl/scripts) | Búsqueda | Conector |
-|---|---|---|---|---|
-| JUBA (SCBA) | Sí | Sí | Funciona con navegador (formulario ASP.NET con JavaScript) | `scripts/juba.js` |
-| Córdoba, Jurisemia | Sí | Sí | **Bloqueada por captcha** (Cloudflare Turnstile) | No (no se evade el captcha) |
-| SAIJ | Sí | **403** | La API JSON responde pero devuelve 0 resultados | Pendiente |
-| CSJN sjconsulta | Sí, sin captcha | **403** | [a verificar]: formulario de sumarios | Pendiente |
-| CIJ | Redirige a csjn.gov.ar | **403** | [a verificar] | Pendiente |
-| PJN | Solo devuelve el título | Conexión cortada | No accesible | Pendiente |
+| Fuente | Búsqueda | Ficha del fallo | Conector |
+|---|---|---|---|
+| JUBA (SCBA) | Sí, con navegador (formulario ASP.NET con JavaScript) | Sí, texto completo | `scripts/juba.js` |
+| SAIJ | Sí, API JSON pública | Sí, ficha JSON y PDF | `scripts/saij.js` |
+| CSJN sjconsulta | **No: exige reCAPTCHA Enterprise** | Sí: análisis, sumarios, citantes y PDF (JSON público) | `scripts/csjn.js` (solo ficha) |
+| Córdoba, Jurisemia | **No: exige Cloudflare Turnstile** | [a verificar] | No (no se evade el captcha) |
+| CIJ | [a verificar] (redirige a csjn.gov.ar) | [a verificar] | Pendiente |
+| PJN | No: la portada no respondió | [a verificar] | Pendiente |
 
-Los 403 los devuelve el propio sitio, no un proxy: parecen bloquear direcciones IP de
-servidores en la nube. Desde una computadora personal pueden responder.
+Las portadas de SAIJ, CSJN y CIJ devuelven 403 a `curl`, pero las APIs y fichas que usan
+los conectores responden a Node (`fetch`) sin problemas. WebFetch también llega, aunque
+resume el contenido y no copia textos largos de forma literal: para citar textual, usar
+los conectores.
 
 ## Nación y Federal
 
@@ -24,11 +26,26 @@ servidores en la nube. Desde una computadora personal pueden responder.
 - Cobertura: fallos y sumarios de la Corte Suprema; colección *Fallos*.
 - Fueros: todos (la Corte interviene por recurso extraordinario).
 - Cita: `Fallos: <tomo>:<página>` cuando conste; si no, número de causa y fecha.
-- Búsqueda: el formulario de **Sumarios (1863-2026)** carga sin captcha y tiene estos campos:
-  texto (todas las palabras / algunas / frase exacta / palabras cercanas), voces, autos,
-  fecha exacta, fecha desde/hasta, tomo y página. [a verificar]: cómo envía la consulta y
-  el formato de los resultados.
-- Acceso: responde a WebFetch; desde servidores devuelve 403.
+- Búsqueda: el formulario de **Sumarios (1863-2026)** (texto, voces, autos, fechas, tomo y
+  página) envía un POST a `/sjconsulta/consultaSumarios/buscar.html` con un token de
+  **reCAPTCHA Enterprise**. No se automatiza. Para encontrar fallos de la Corte por tema,
+  usar SAIJ con `--solo-csjn`; para buscar en la CSJN, hacerlo a mano.
+- Ficha de un fallo (pública, sin captcha), a partir del `idDocumento` que figura en los
+  enlaces `verDocumentoByIdLinksJSP.html?idDocumento=N`:
+  - `/sjconsulta/documentos/verDocumentoByIdLinksJSP.html?idDocumento=N`: autos, fecha,
+    `Fallos: tomo:página`, cita `CS año:número` e `idAnalisis`.
+  - `/sjconsulta/documentos/getDocumentosExterno.html?idAnalisis=N`: lo mismo a partir del
+    `idAnalisis`.
+  - `/sjconsulta/fallos/abrirAnalisis.html?idAnalisis=N` (JSON): expediente, tribunal de
+    origen, tipo de recurso, **sentido del pronunciamiento** (confirma, revoca, etc.),
+    materias, voces, cuestiones federales, **referencias normativas** (con marca de
+    inconstitucionalidad) y votos.
+  - `/sjconsulta/sumarios/getSumariosAnalisis.html?idAnalisis=N` (JSON): sumarios oficiales.
+  - `/sjconsulta/documentos/getCitantes.html?idDocumento=N`: fallos posteriores que lo
+    citan (útil para la vigencia de la doctrina).
+  - `/sjconsulta/documentos/verDocumentoById.html?idDocumento=N`: PDF del fallo.
+  - Con un identificador inexistente, la ficha responde HTTP 500.
+- Conector: `scripts/csjn.js fallo --id <idDocumento>` o `--analisis <idAnalisis>`.
 
 ### CIJ: Centro de Información Judicial
 - URL: https://www.cij.gov.ar (hoy redirige a
@@ -40,16 +57,30 @@ servidores en la nube. Desde una computadora personal pueden responder.
 ### SAIJ: Sistema Argentino de Información Jurídica
 - URL: https://www.saij.gob.ar
 - Cobertura: fallos y sumarios nacionales, federales y provinciales (incluye PBA y Córdoba).
-- Búsqueda: el menú Jurisprudencia lleva a `/buscador/jurisprudencia-nacional`,
-  `/buscador/jurisprudencia-federal` y `/buscador/jurisprudencia-corte-suprema`, con filtros
-  por carátula, jurisdicción, tribunal, tema, texto, fechas e Id-Doc.
-- API: `https://www.saij.gob.ar/busqueda?o=<offset>&p=<cantidad>&f=<facetas>&r=<consulta>&v=colapsada`
-  devuelve JSON (`queryObjectData`, `searchResults.totalSearchResults`,
-  `searchResults.documentResultList`). Facetas: p. ej.
-  `Total|Tipo de Documento/Jurisprudencia/Fallo`. **Al 29/10/2026 devuelve 0 resultados
-  incluso para "despido"**, y la página `resultados.jsp` muestra "Ocurrió un error".
-  [a verificar]: el formato correcto de `r` o si es una falla del sitio.
-- Acceso: responde a WebFetch; desde servidores devuelve 403.
+- API de búsqueda (JSON, pública):
+  `https://www.saij.gob.ar/busqueda?r=<consulta>&o=<offset>&p=<cantidad, máx. 25>&f=<facetas>&s=fecha-rango|DESC&v=colapsada`
+  - `r` usa sintaxis Lucene con campo: `+texto: "frase"` busca en el texto de los
+    **sumarios**; `+titulo: palabra` busca en el título, que en los **fallos** es la
+    carátula (no el contenido). El campo y el `+` se aplican a un solo término: para
+    exigir varios, repetirlos (`+texto: "a" +texto: "b"`). Sin campo, `r=despido` devuelve 0.
+  - `f` son facetas separadas por `|`: `Total`, `Tipo de Documento/Jurisprudencia/Fallo` o
+    `.../Sumario`, `Fecha`, `Tribunal/<NOMBRE>` (solo fallos; p. ej.
+    `Tribunal/CORTE SUPREMA DE JUSTICIA DE LA NACION`) y `Jurisdicción/<Nacional|Federal|Local>`.
+  - El total está en `categoriesResultList` → `Total` → `total`. `totalSearchResults` es la
+    cantidad devuelta en la página.
+  - Cada resultado trae la ficha como JSON serializado en `documentAbstract`. En los
+    sumarios, el texto viene recortado y sin carátula ni fecha.
+  - Los sumarios de la CSJN se numeran con prefijo **A** (`+numero-sumario: A*`). Es una
+    deducción verificada en muestras, no documentada por SAIJ: confirmar con la ficha
+    (`tipo-tribunal: CS`, jurisdicción Federal).
+- Ficha completa: `https://www.saij.gob.ar/view-document?guid=<uuid>` (JSON con la ficha en
+  `data`). Los fallos traen tribunal, sala, fecha, actor/demandado/sobre, magistrados,
+  sumarios relacionados y `texto-doc` → PDF en
+  `/descarga-archivo?guid=<uuid>&name=<archivo>`. Los sumarios traen carátula, fecha,
+  provincia y el texto completo (con marcas `[[p]]`). Algunos sumarios no tienen fecha
+  ni carátula en la fuente.
+- Un `id-infojus` (p. ej. `FA23040046`, `SUJ0042712`) se resuelve con `r=id-infojus:<id>`.
+- Conector: `scripts/saij.js`.
 
 ### PJN: Poder Judicial de la Nación
 - URL: https://www.pjn.gov.ar
@@ -101,7 +132,7 @@ servidores en la nube. Desde una computadora personal pueden responder.
   (catálogo: Boletín Judicial; texto de búsqueda obligatorio y filtro por campos).
 - Limitación: **exige Cloudflare Turnstile (captcha)**. Sin resolverlo, la búsqueda no se
   ejecuta. No hay conector automático: informarlo en "Advertencias" y sugerir la consulta
-  manual, o usar SAIJ como fuente alternativa para Córdoba.
+  manual, o usar SAIJ (`saij.js`, jurisdicción Local) como fuente alternativa para Córdoba.
 
 ## Fuentes secundarias (solo pistas)
 
