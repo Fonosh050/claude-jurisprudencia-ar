@@ -1,0 +1,10 @@
+{
+  "name": "jurisprudencia-ar",
+  "version": "0.1.0",
+  "description": "Busca jurisprudencia argentina en fuentes oficiales del Poder Judicial (CSJN, tribunales nacionales y federales, Provincia de Buenos Aires y Córdoba) y devuelve fallos verificados, sin inventar datos.",
+  "author": {
+    "name": "Fonosh050"
+  },
+  "repository": "https://github.com/Fonosh050/claude-jurisprudencia-ar",
+  "keywords": ["jurisprudencia", "argentina", "derecho", "fallos", "csjn", "scba"]
+}

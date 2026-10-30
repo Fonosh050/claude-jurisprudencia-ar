@@ -1,0 +1,18 @@
+{
+  "name": "jurisprudencia-ar",
+  "owner": {
+    "name": "Fonosh050"
+  },
+  "metadata": {
+    "description": "Herramientas de Claude para buscar jurisprudencia argentina."
+  },
+  "plugins": [
+    {
+      "name": "jurisprudencia-ar",
+      "source": "./",
+      "description": "Busca jurisprudencia argentina en fuentes oficiales y devuelve fallos verificados, sin inventar datos.",
+      "version": "0.1.0",
+      "category": "legal"
+    }
+  ]
+}
