@@ -12,10 +12,32 @@ Fueros prioritarios: contencioso administrativo, penal, comercial, civil y labor
 
 ## Instalación
 
+### Como plugin (recomendado)
+
+En Claude Code:
+
+```
+/plugin marketplace add Fonosh050/claude-jurisprudencia-ar
+```
+
+```
+/plugin install jurisprudencia-ar@jurisprudencia-ar
+```
+
+En Claude Code 2.1.275 o posterior también funciona en un solo paso:
+
+```
+/plugin install jurisprudencia-ar --marketplace Fonosh050/claude-jurisprudencia-ar
+```
+
+Para recibir las actualizaciones: `/plugin marketplace update jurisprudencia-ar`.
+
+### Manual
+
 Para todos tus proyectos:
 
 ```bash
-git clone <URL-del-repo> ~/jurisprudencia-ar
+git clone https://github.com/Fonosh050/claude-jurisprudencia-ar ~/jurisprudencia-ar
 ```
 
 ```bash
